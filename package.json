@@ -2,9 +2,16 @@
   "name": "seo-sites",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "sites/*"],
+  "workspaces": [
+    "packages/*",
+    "sites/*"
+  ],
   "scripts": {
     "build:lighting": "npm run build -w sites/lighting",
-    "dev:lighting": "npm run dev -w sites/lighting"
+    "dev:lighting": "npm run dev -w sites/lighting",
+    "build:wall": "npm run build -w sites/wall",
+    "dev:wall": "npm run dev -w sites/wall",
+    "build:acoustic": "npm run build -w sites/acoustic",
+    "dev:acoustic": "npm run dev -w sites/acoustic"
   }
 }
