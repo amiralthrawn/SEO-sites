@@ -1,0 +1,37 @@
+---
+import { canonical, orgSchema, type SiteConfig } from "./site";
+interface Props { site: SiteConfig; title: string; description: string; path?: string; noindex?: boolean }
+const { site, title, description, path = "/", noindex = false } = Astro.props;
+const fullTitle = path === "/" ? `${title}` : `${title} | ${site.name}`;
+---
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical(site, path)} />
+    {noindex && <meta name="robots" content="noindex,follow" />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema(site))} />
+    <style define:vars={{ accent: site.accent }}>
+      body { font-family: system-ui, sans-serif; margin: 0; color: #1f1d1a; background: #faf8f5; line-height: 1.6; }
+      header, main, footer { max-width: 960px; margin: 0 auto; padding: 1rem 1.25rem; }
+      header a { color: inherit; text-decoration: none; font-weight: 700; }
+      h1 { font-size: 2rem; line-height: 1.2; }
+      a { color: var(--accent); }
+      footer { font-size: .85rem; color: #6b665e; }
+    </style>
+  </head>
+  <body>
+    <header><a href="/">{site.name}</a></header>
+    <main><slot /></main>
+    <footer>
+      <p>Certains liens sont des liens d'affiliation : si vous achetez via ces liens, nous touchons une commission, sans surcoût pour vous.</p>
+    </footer>
+  </body>
+</html>

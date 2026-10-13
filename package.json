@@ -1,0 +1,10 @@
+{
+  "name": "seo-sites",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "sites/*"],
+  "scripts": {
+    "build:lighting": "npm run build -w sites/lighting",
+    "dev:lighting": "npm run dev -w sites/lighting"
+  }
+}
