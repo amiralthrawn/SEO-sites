@@ -1,0 +1,107 @@
+---
+import Layout from "@seo/core/Layout.astro";
+import { canonical } from "@seo/core/site";
+import { site } from "../site.config";
+import ConfigurateurAmbiance from "../components/ConfigurateurAmbiance.astro";
+
+const path = "/configurateur-eclairage";
+const title = "Combien de lumens par m² ? Le configurateur d'éclairage pièce par pièce";
+const description = "Indiquez votre pièce, sa surface, votre style et votre budget : le configurateur calcule les lumens nécessaires et compose un ensemble de luminaires chiffré.";
+// Brouillon : noindex tant que les prix et liens marchands ne sont pas vérifiés.
+const noindex = true;
+
+const faq = [
+  {
+    q: "Combien de lumens faut-il par m² ?",
+    a: "Comptez environ 100 lumens par m² dans une chambre, 150 dans un salon ou une salle à manger et 250 à 300 dans un bureau. Un salon de 20 m² demande donc autour de 3 000 lumens, répartis sur plusieurs lampes.",
+  },
+  {
+    q: "Combien de points lumineux dans une pièce ?",
+    a: "Au moins trois, à des hauteurs différentes : une lumière générale (suspension ou lampadaire), une lumière d'ambiance (lampe à poser) et une lumière d'accent ou de travail. Ajoutez une source tous les 10 m² au-delà de 20 m².",
+  },
+  {
+    q: "Quelle température de couleur choisir ?",
+    a: "2 700 K (blanc chaud) pour une pièce à vivre chaleureuse, 2 200 K pour une ambiance tamisée, 3 000 K pour une pièce lumineuse. Le blanc froid (4 000 K et plus) se réserve au plan de travail ou au bureau.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: canonical(site, "/") },
+      { "@type": "ListItem", position: 2, name: "Configurateur d'éclairage", item: canonical(site, path) },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<Layout site={site} title={title} description={description} path={path} schema={schema} noindex={noindex}>
+  <nav class="crumbs"><a href="/">Accueil</a> › Configurateur d'éclairage</nav>
+  <h1>Combien de lumens par m² ? Composez l'éclairage de votre pièce</h1>
+  <p class="lead">
+    Une pièce bien éclairée, ce n'est pas un gros plafonnier : ce sont plusieurs sources de lumière à différentes hauteurs.
+    Dites-nous votre pièce, sa surface, votre style et votre budget : nous calculons la lumière qu'il vous faut et
+    composons un ensemble de luminaires qui va ensemble.
+  </p>
+
+  <ConfigurateurAmbiance />
+
+  <section aria-labelledby="lux-title">
+    <h2 id="lux-title">Combien de lumens par m², pièce par pièce</h2>
+    <p>Le lux mesure la lumière qui arrive sur une surface : 1 lux = 1 lumen par m². Multipliez la surface par la valeur du tableau
+    pour connaître le total de lumens à répartir entre vos lampes.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pièce</th><th>Lumens par m²</th><th>Exemple</th></tr></thead>
+        <tbody>
+          <tr><td>Chambre</td><td>100</td><td>12 m² : 1 200 lumens</td></tr>
+          <tr><td>Salon</td><td>150</td><td>20 m² : 3 000 lumens</td></tr>
+          <tr><td>Salle à manger</td><td>150 (et 300 sur la table)</td><td>15 m² : 2 250 lumens</td></tr>
+          <tr><td>Bureau</td><td>250 (et 500 sur le plan de travail)</td><td>10 m² : 2 500 lumens</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Pour une ambiance tamisée, retirez environ un tiers ; pour une pièce sombre ou des murs foncés, ajoutez-en un tiers.</p>
+  </section>
+
+  <section aria-labelledby="layers-title">
+    <h2 id="layers-title">Les 3 couches de lumière</h2>
+    <ul>
+      <li><b>Lumière générale :</b> suspension, plafonnier ou lampadaire. Elle porte environ la moitié des lumens.</li>
+      <li><b>Lumière d'ambiance :</b> lampes à poser, autour de 400 lumens chacune. C'est elle qui rend la pièce chaleureuse le soir.</li>
+      <li><b>Lumière d'accent ou de travail :</b> une applique qui souligne un mur, une lampe de lecture, une lampe de bureau.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions fréquentes</h2>
+    {faq.map((f) => (
+      <details><summary>{f.q}</summary><p>{f.a}</p></details>
+    ))}
+  </section>
+
+  <section class="method">
+    <h2>Comment fonctionne le configurateur</h2>
+    <p>Nous partons des valeurs d'éclairement courantes pour chaque pièce, puis nous choisissons dans notre sélection la combinaison
+    de luminaires qui colle le mieux à votre style et à votre ambiance sans dépasser votre budget. Certains liens sont affiliés :
+    cela ne change ni le prix ni la sélection.</p>
+  </section>
+
+  <style>
+    .crumbs { font-size: .85rem; color: #6b665e; }
+    .lead { font-size: 1.1rem; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; background: #fff; font-size: .92rem; }
+    th, td { border: 1px solid #e4ded5; padding: .45rem .6rem; text-align: left; }
+    th { background: #f3eee7; }
+    details { background: #fff; border: 1px solid #e4ded5; border-radius: 8px; padding: .5rem .8rem; margin: .5rem 0; }
+    summary { cursor: pointer; font-weight: 600; }
+    .method { font-size: .9rem; color: #4a463f; }
+  </style>
+</Layout>

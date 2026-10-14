@@ -1,5 +1,5 @@
 ---
-import { canonical, orgSchema, type SiteConfig } from "./site";
+import { canonical, orgSchema, AMAZON_DISCLOSURE, type SiteConfig } from "./site";
 interface Props { site: SiteConfig; title: string; description: string; path?: string; noindex?: boolean; schema?: object[] }
 const { site, title, description, path = "/", noindex = false, schema = [] } = Astro.props;
 const fullTitle = path === "/" ? `${title}` : `${title} | ${site.name}`;
@@ -33,6 +33,7 @@ const fullTitle = path === "/" ? `${title}` : `${title} | ${site.name}`;
     <main><slot /></main>
     <footer>
       <p>Certains liens sont des liens d'affiliation : si vous achetez via ces liens, nous touchons une commission, sans surcoût pour vous.</p>
+      {site.amazonTag && <p>{AMAZON_DISCLOSURE}</p>}
     </footer>
   </body>
 </html>

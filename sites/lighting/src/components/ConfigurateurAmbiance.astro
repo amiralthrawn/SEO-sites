@@ -1,0 +1,155 @@
+---
+// Configurateur d'ambiance lumineuse. Réutilisable : <ConfigurateurAmbiance room="chambre" />
+// pré-remplit la pièce (pour les futures pages « éclairage chambre », « éclairage salon »…).
+import { AMAZON_DISCLOSURE } from "@seo/core/site";
+import { rooms, styles, moods, type Room } from "../tools/ambiance";
+import { site } from "../site.config";
+interface Props { room?: Room }
+const { room = "salon" } = Astro.props;
+---
+<section class="cfg" aria-labelledby="cfg-title">
+  <h2 id="cfg-title">Composez votre ambiance lumineuse</h2>
+  <form class="cfg-form" id="cfg-form">
+    <label>Pièce
+      <select name="room">
+        {Object.entries(rooms).map(([v, l]) => <option value={v} selected={v === room}>{l}</option>)}
+      </select>
+    </label>
+    <label>Surface : <output name="areaOut">20 m²</output>
+      <input type="range" name="area" min="8" max="60" step="1" value="20" />
+    </label>
+    <label>Style
+      <select name="style">
+        {Object.entries(styles).map(([v, l]) => <option value={v}>{l}</option>)}
+      </select>
+    </label>
+    <label>Ambiance
+      <select name="mood">
+        {Object.entries(moods).map(([v, l]) => <option value={v}>{l}</option>)}
+      </select>
+    </label>
+    <label>Budget : <output name="budgetOut">600 €</output>
+      <input type="range" name="budget" min="200" max="2500" step="50" value="600" />
+    </label>
+  </form>
+
+  <div class="cfg-result" id="cfg-result" aria-live="polite" data-amazon-tag={site.amazonTag ?? ""}></div>
+  <p class="cfg-note">Prix indicatifs : le prix exact et le stock s'affichent chez le marchand. Estimation simplifiée,
+  qui ne remplace pas une étude d'éclairagiste. Les boutons sont des liens affiliés.
+  {site.amazonTag && AMAZON_DISCLOSURE}</p>
+</section>
+
+<script>
+  import { bestBundle, budgetBundle, euros, type Bundle, type Product } from "@seo/core/bundle";
+  import { amazonUrl } from "@seo/core/site";
+  import { catalogue } from "../data/catalogue";
+  import { request, lumensNeeded, lumenPlan, kelvinFor, sourcesAdvice, roleLabel, rooms, styles, moods, type Answers } from "../tools/ambiance";
+
+  const form = document.getElementById("cfg-form") as HTMLFormElement;
+  const out = document.getElementById("cfg-result")!;
+  const amazonTag = out.dataset.amazonTag;
+  // Lien marchand : lien affilié direct, sinon Amazon si l'ASIN et le tag existent ; sinon pas de bouton.
+  const link = (p: Product) =>
+    p.url ? { href: p.url, label: "Voir le prix" }
+    : p.asin && amazonTag ? { href: amazonUrl(p.asin, amazonTag), label: "Voir sur Amazon" }
+    : null;
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+
+  // Les réponses vivent dans l'URL : un ensemble peut être partagé ou mis en favori.
+  const params = new URLSearchParams(location.search);
+  for (const k of ["room", "area", "style", "mood", "budget"]) {
+    const v = params.get(k), el = form.elements.namedItem(k) as HTMLInputElement | null;
+    if (v && el) el.value = v;
+  }
+
+  function read(): Answers {
+    const f = new FormData(form);
+    const pick = <T extends object>(m: T, v: unknown, d: keyof T) => (String(v) in m ? String(v) : d) as keyof T;
+    return {
+      room: pick(rooms, f.get("room"), "salon"),
+      area: Number(f.get("area")) || 20,
+      style: pick(styles, f.get("style"), "japandi"),
+      mood: pick(moods, f.get("mood"), "chaleureuse"),
+      budget: Number(f.get("budget")) || 600,
+    };
+  }
+
+  function list(b: Bundle, bulbs: Map<string, number>): string {
+    const items = b.picks.map((p) => {
+      const l = link(p.product);
+      const btn = l ? `<a class="btn" href="${esc(l.href)}" rel="sponsored nofollow noopener" target="_blank">${l.label}</a><span class="aff">Lien affilié</span>` : "";
+      return `
+      <li>
+        <div class="pick-main">
+          <span class="role">${esc(roleLabel[p.slot.role])} · ${esc(p.slot.label)}</span>
+          <b>${esc(p.product.name)}</b> <span class="brand">${esc(p.product.brand)}</span>
+          <span class="bulb">Ampoule conseillée : ${bulbs.get(p.product.id)!.toLocaleString("fr-FR")} lumens</span>
+        </div>
+        <div class="pick-price">
+          ${p.qty > 1 ? `<span class="brand">${p.qty} × ${euros(p.product.price)}</span>` : ""}
+          <b>${euros(p.subtotal)}</b>
+          ${btn}
+        </div>
+      </li>`;
+    }).join("");
+    return `<ul class="picks">${items}<li class="total"><b>Total</b><b>${euros(b.total)}</b></li></ul>`;
+  }
+
+  function render() {
+    const a = read();
+    (form.elements.namedItem("areaOut") as HTMLOutputElement).value = `${a.area} m²`;
+    (form.elements.namedItem("budgetOut") as HTMLOutputElement).value = euros(a.budget);
+    history.replaceState(null, "", `?${new URLSearchParams(Object.entries(a).map(([k, v]) => [k, String(v)]))}`);
+
+    const req = request(a);
+    const best = bestBundle(catalogue, req);
+    const lumens = lumensNeeded(a);
+    if (!best) { out.innerHTML = "<p>Aucun produit ne correspond encore à cette pièce.</p>"; return; }
+    const plan = lumenPlan(best, lumens, a.mood);
+    const eco = best.overBudget ? null : budgetBundle(catalogue, req, best);
+
+    let html = `<ul class="cfg-facts">
+      <li><b>${lumens.toLocaleString("fr-FR")} lumens</b> au total pour ${a.area} m² (${rooms[a.room].toLowerCase()}, ambiance ${moods[a.mood].toLowerCase()})</li>
+      <li>Au moins <b>${sourcesAdvice(a.area)} points lumineux</b> à différentes hauteurs</li>
+      <li>Ampoules : <b>${kelvinFor(a.mood)}</b></li>
+    </ul>`;
+    html += best.overBudget
+      ? `<p class="warn">Avec ${euros(a.budget)}, nous ne trouvons pas encore d'ensemble complet dans notre sélection. Voici le plus abordable, à ${euros(best.total)} :</p>`
+      : `<h3>Notre proposition pour ${euros(a.budget)}</h3>`;
+    html += list(best, plan.bulbs);
+    if (!best.overBudget) html += `<p>Il vous reste <b>${euros(a.budget - best.total)}</b> sur votre budget.</p>`;
+    const sources = best.picks.reduce((n, p) => n + p.qty, 0);
+    const missing = sourcesAdvice(a.area) - sources;
+    if (missing > 0) html += `<p>Cet ensemble compte ${sources} point${sources > 1 ? "s" : ""} lumineux : gardez ou ajoutez ${missing} source${missing > 1 ? "s" : ""} (une lampe que vous avez déjà, une guirlande, un ruban LED) pour atteindre ${sourcesAdvice(a.area)}.</p>`;
+    if (plan.shortfall) html += `<p class="warn">Il manque environ ${plan.shortfall.toLocaleString("fr-FR")} lumens pour bien éclairer ${a.area} m² sans éblouir : ajoutez une source (spots, applique) ou augmentez le budget.</p>`;
+    if (eco) html += `<h3>Version économique : ${euros(eco.total)}</h3>` + list(eco, lumenPlan(eco, lumens, a.mood).bulbs);
+    out.innerHTML = html;
+  }
+
+  form.addEventListener("input", render);
+  render();
+</script>
+
+<style is:global>
+  .cfg { background: #fff; border: 1px solid #e4ded5; border-radius: 12px; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+  .cfg-form { display: grid; gap: .75rem 1rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .cfg-form label { display: flex; flex-direction: column; gap: .3rem; font-weight: 600; font-size: .92rem; }
+  .cfg-form select, .cfg-form input { font: inherit; font-weight: 400; }
+  .cfg-form select { padding: .4rem; border: 1px solid #cfc6b8; border-radius: 6px; background: #faf8f5; }
+  .cfg-form input[type="range"] { accent-color: var(--accent); }
+  .cfg-facts { background: #faf8f5; border-left: 4px solid var(--accent); padding: .6rem 1rem .6rem 2rem; margin: 1.25rem 0; }
+  .cfg-result h3 { margin-bottom: .4rem; }
+  .cfg-result .role { font-size: .8rem; color: #6b665e; text-transform: uppercase; letter-spacing: .03em; }
+  .cfg-result .brand { color: #6b665e; font-size: .85rem; }
+  .cfg .picks { list-style: none; padding: 0; margin: 0; border: 1px solid #e4ded5; border-radius: 8px; }
+  .cfg .picks li { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem .8rem; border-top: 1px solid #e4ded5; }
+  .cfg .picks li:first-child { border-top: 0; }
+  .cfg .pick-main { display: flex; flex-direction: column; }
+  .cfg .pick-price { display: flex; flex-direction: column; align-items: flex-end; gap: .25rem; white-space: nowrap; }
+  .cfg .aff { font-size: .75rem; color: #6b665e; }
+  .cfg .bulb { font-size: .85rem; color: #4a463f; }
+  .cfg .picks .total { background: #f3eee7; }
+  .cfg .warn { background: #fff4e5; border-radius: 6px; padding: .5rem .75rem; }
+  .cfg-note { font-size: .8rem; color: #6b665e; }
+  .cfg .btn { display: inline-block; background: var(--accent); color: #fff; padding: .35rem .8rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
+</style>
