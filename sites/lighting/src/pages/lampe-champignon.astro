@@ -1,0 +1,244 @@
+---
+import Layout from "@seo/core/Layout.astro";
+import { canonical } from "@seo/core/site";
+import { site } from "../site.config";
+import { lamps } from "../data/lampe-champignon";
+
+const path = "/lampe-champignon";
+const title = "Lampe champignon : 5 modèles iconiques et guide pour bien choisir";
+const description = "Nessino, Flowerpot, Panthella, Atollo, Pipistrello : notre sélection de lampes champignon, un comparatif et un mini-quiz pour trouver la taille, la matière et l'ampoule qu'il vous faut.";
+const updated = "octobre 2026";
+
+const faq = [
+  {
+    q: "Pourquoi appelle-t-on cette lampe « champignon » ?",
+    a: "Pour sa silhouette : un pied fin surmonté d'un chapeau arrondi. Le style est né dans les années 1960-1970 avec des designers italiens et danois, et revient en force depuis quelques années.",
+  },
+  {
+    q: "Une lampe champignon éclaire-t-elle assez pour lire ?",
+    a: "Rarement. Son chapeau diffuse une lumière douce, faite pour l'ambiance. Pour lire au lit, ajoutez une liseuse ou choisissez une ampoule plus puissante (environ 450 lumens) dans un modèle opalin.",
+  },
+  {
+    q: "Quelle ampoule mettre dans une lampe champignon ?",
+    a: "Une LED blanc chaud de 2 700 K, entre 250 et 450 lumens selon la taille. Vérifiez le culot (souvent E14 ou E27) sur la fiche produit. Évitez le blanc froid, qui casse l'effet cosy.",
+  },
+  {
+    q: "Une lampe champignon sans fil, c'est une bonne idée ?",
+    a: "Oui pour une table, une terrasse ou un dîner : vous la posez où vous voulez. Regardez l'autonomie annoncée, le mode de recharge (USB-C ou socle) et la présence d'un variateur.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: canonical(site, "/") },
+      { "@type": "ListItem", position: 2, name: "Lampe champignon", item: canonical(site, path) },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Sélection de lampes champignon",
+    itemListElement: lamps.map((l, i) => ({ "@type": "ListItem", position: i + 1, name: `${l.name} (${l.brand})` })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+
+const budgetLabel = { moyen: "€€", premium: "€€€" };
+const usageLabel = { chevet: "Chevet", salon: "Salon", bureau: "Bureau", exterieur: "Extérieur" };
+---
+<Layout site={site} title={title} description={description} path={path} schema={schema}>
+  <nav class="crumbs"><a href="/">Accueil</a> › Lampe champignon</nav>
+  <h1>Lampe champignon : 5 modèles iconiques et comment bien choisir</h1>
+  <p class="meta">Mis à jour en {updated}</p>
+
+  <p class="lead">
+    La lampe champignon est l'objet déco qui réchauffe une pièce en un geste : un pied fin, un chapeau arrondi, une lumière douce qui
+    ne fait jamais mal aux yeux. Voici les modèles qui ont créé le style, et surtout comment choisir la bonne taille, la bonne matière
+    et la bonne ampoule pour votre pièce.
+  </p>
+
+  <aside class="tldr">
+    <strong>En bref</strong>
+    <ul>
+      <li>Pour un chevet : visez 25 à 40 cm de haut, une matière opaline ou translucide.</li>
+      <li>Pour un buffet ou une console : 40 à 70 cm, la lampe devient un objet de déco.</li>
+      <li>Ampoule : LED 2 700 K, 250 à 450 lumens.</li>
+      <li>Sans fil : idéale pour une table à manger ou une terrasse.</li>
+    </ul>
+  </aside>
+
+  <section id="quiz" aria-labelledby="quiz-title">
+    <h2 id="quiz-title">Trouvez votre lampe champignon en 3 clics</h2>
+    <form class="quiz" id="quiz-form">
+      <fieldset>
+        <legend>Où va-t-elle ?</legend>
+        <label><input type="radio" name="usage" value="" checked /> Peu importe</label>
+        {Object.entries(usageLabel).map(([v, l]) => <label><input type="radio" name="usage" value={v} /> {l}</label>)}
+      </fieldset>
+      <fieldset>
+        <legend>Budget</legend>
+        <label><input type="radio" name="budget" value="" checked /> Tous</label>
+        <label><input type="radio" name="budget" value="moyen" /> Moyen (€€)</label>
+        <label><input type="radio" name="budget" value="premium" /> Pièce de designer (€€€)</label>
+      </fieldset>
+      <fieldset>
+        <legend>Sans fil ?</legend>
+        <label><input type="radio" name="cordless" value="" checked /> Peu importe</label>
+        <label><input type="radio" name="cordless" value="1" /> Oui, rechargeable</label>
+      </fieldset>
+    </form>
+    <p class="quiz-count" id="quiz-count" aria-live="polite"></p>
+  </section>
+
+  <section aria-labelledby="selection-title">
+    <h2 id="selection-title">Notre sélection</h2>
+    <div class="cards">
+      {lamps.map((l) => (
+        <article class="card" id={l.id} data-usages={l.usages.join(" ")} data-budget={l.budget} data-cordless={l.cordless ? "1" : "0"}>
+          <div class="shape" aria-hidden="true"><span class="cap"></span><span class="stem"></span></div>
+          <h3>{l.name} <span class="brand">{l.brand}</span></h3>
+          <p class="sub">{l.designer}, {l.year} · {budgetLabel[l.budget]}{l.cordless && " · Sans fil"}</p>
+          <p>{l.pitch}</p>
+          <ul class="specs">
+            <li><b>Matière :</b> {l.material}</li>
+            <li><b>Hauteur :</b> {l.height}</li>
+            <li><b>Idéale pour :</b> {l.usages.map((u) => usageLabel[u]).join(", ")}</li>
+          </ul>
+          {l.url && <a class="btn" href={l.url} rel="sponsored nofollow noopener" target="_blank">Voir le prix</a>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="compare-title">
+    <h2 id="compare-title">Comparatif rapide</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Modèle</th><th>Designer</th><th>Matière</th><th>Hauteur</th><th>Sans fil</th><th>Budget</th></tr></thead>
+        <tbody>
+          {lamps.map((l) => (
+            <tr><td><a href={`#${l.id}`}>{l.name}</a></td><td>{l.designer}</td><td>{l.material}</td><td>{l.height}</td><td>{l.cordless ? "Oui" : "Non"}</td><td>{budgetLabel[l.budget]}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="size-title">
+    <h2 id="size-title">Quelle taille de lampe champignon choisir ?</h2>
+    <p>La bonne hauteur dépend du meuble et de la position de vos yeux. Une règle simple : le bas du chapeau doit arriver à peu près
+    à hauteur d'épaule quand vous êtes assis à côté. Plus haut, l'ampoule vous éblouit ; plus bas, la lumière reste au ras du meuble.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Emplacement</th><th>Hauteur conseillée</th><th>Diamètre du chapeau</th></tr></thead>
+        <tbody>
+          <tr><td>Table de chevet</td><td>25 à 40 cm</td><td>20 à 30 cm</td></tr>
+          <tr><td>Étagère, rebord de fenêtre</td><td>15 à 30 cm</td><td>15 à 25 cm</td></tr>
+          <tr><td>Bureau (ambiance)</td><td>30 à 45 cm</td><td>25 à 35 cm</td></tr>
+          <tr><td>Buffet, console, enfilade</td><td>40 à 70 cm</td><td>30 à 50 cm</td></tr>
+          <tr><td>Au sol, à côté d'un fauteuil</td><td>plus de 1 m (lampadaire)</td><td>40 cm et plus</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Sur une petite table de chevet (moins de 40 cm de large), gardez un chapeau d'au plus 25 cm pour laisser la place à un livre et un téléphone.</p>
+  </section>
+
+  <section aria-labelledby="material-title">
+    <h2 id="material-title">Verre, métal, opaline : quelle matière ?</h2>
+    <ul>
+      <li><b>Verre opalin ou acrylique opale :</b> la lumière traverse tout le chapeau, la lampe brille comme un galet. L'effet le plus doux.</li>
+      <li><b>Métal laqué :</b> la lumière sort uniquement vers le bas. Plus graphique, idéal pour un bureau ou une console.</li>
+      <li><b>Plastique coloré translucide :</b> teinte la lumière (orange, vert, rose). Ludique, souvent moins cher.</li>
+      <li><b>Céramique :</b> opaque et mate, très tendance, mais lourde : vérifiez la stabilité si un enfant ou un animal passe par là.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="bulb-title">
+    <h2 id="bulb-title">Quelle ampoule et quelle puissance ?</h2>
+    <p>Choisissez une LED <b>blanc chaud 2 700 K</b> : c'est la teinte qui donne l'effet « coucher de soleil ». Pour la puissance,
+    comptez <b>250 lumens</b> pour une petite lampe d'ambiance et jusqu'à <b>450 lumens</b> pour un grand modèle opalin.
+    Si la lampe est variable ou sur variateur, prenez une ampoule notée « dimmable ».</p>
+  </section>
+
+  <section aria-labelledby="budget-title">
+    <h2 id="budget-title">Petit budget : ce qu'il faut vérifier</h2>
+    <p>Le style champignon est très copié. Une version à petit prix peut être un très bon achat si vous vérifiez trois points :</p>
+    <ol>
+      <li><b>Le chapeau :</b> du vrai verre ou un acrylique épais. Un plastique fin laisse voir l'ampoule et jaunit.</li>
+      <li><b>L'interrupteur :</b> un variateur ou un interrupteur sur le câble est bien plus pratique sur un chevet.</li>
+      <li><b>Le culot :</b> un culot standard (E14, E27) vous permet de changer l'ampoule ; une LED intégrée ne se remplace pas.</li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions fréquentes</h2>
+    {faq.map((f) => (
+      <details><summary>{f.q}</summary><p>{f.a}</p></details>
+    ))}
+  </section>
+
+  <section class="method">
+    <h2>Comment nous choisissons</h2>
+    <p>Nous retenons des modèles toujours fabriqués et vendus en France, en vérifiant les caractéristiques sur la fiche du fabricant.
+    Nous ne recevons pas de produits gratuits. Certains liens sont affiliés : cela ne change ni le prix ni notre sélection.</p>
+  </section>
+
+  <script>
+    const form = document.getElementById("quiz-form") as HTMLFormElement;
+    const count = document.getElementById("quiz-count")!;
+    const cards = Array.from(document.querySelectorAll<HTMLElement>(".card"));
+    function apply() {
+      const f = new FormData(form);
+      const usage = f.get("usage"), budget = f.get("budget"), cordless = f.get("cordless");
+      let shown = 0;
+      for (const c of cards) {
+        const ok = (!usage || c.dataset.usages!.split(" ").includes(String(usage)))
+          && (!budget || c.dataset.budget === budget)
+          && (!cordless || c.dataset.cordless === cordless);
+        c.hidden = !ok;
+        if (ok) shown++;
+      }
+      count.textContent = shown
+        ? `${shown} modèle${shown > 1 ? "s" : ""} correspond${shown > 1 ? "ent" : ""} à vos critères.`
+        : "Aucun modèle ne coche toutes les cases : essayez d'enlever un critère.";
+    }
+    form.addEventListener("change", apply);
+    apply();
+  </script>
+
+  <style>
+    .crumbs, .meta { font-size: .85rem; color: #6b665e; }
+    .lead { font-size: 1.1rem; }
+    .tldr { background: #fff; border-left: 4px solid var(--accent); padding: .75rem 1rem; margin: 1.5rem 0; }
+    .tldr ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+    .quiz { display: grid; gap: .75rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .quiz fieldset { border: 1px solid #e4ded5; border-radius: 8px; background: #fff; }
+    .quiz label { display: block; padding: .15rem 0; cursor: pointer; }
+    .quiz-count { font-weight: 600; }
+    .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card { background: #fff; border: 1px solid #e4ded5; border-radius: 10px; padding: 1rem; }
+    .card[hidden] { display: none; }
+    .card h3 { margin: .5rem 0 0; }
+    .brand { font-weight: 400; color: #6b665e; font-size: .9rem; }
+    .sub { margin: 0; font-size: .85rem; color: #6b665e; }
+    .specs { padding-left: 1.1rem; font-size: .9rem; }
+    .shape { height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+    .cap { width: 70px; height: 32px; border-radius: 70px 70px 6px 6px; background: var(--accent); opacity: .85; }
+    .stem { width: 10px; height: 34px; background: #cfc6b8; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; padding: .5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; background: #fff; font-size: .92rem; }
+    th, td { border: 1px solid #e4ded5; padding: .45rem .6rem; text-align: left; }
+    th { background: #f3eee7; }
+    details { background: #fff; border: 1px solid #e4ded5; border-radius: 8px; padding: .5rem .8rem; margin: .5rem 0; }
+    summary { cursor: pointer; font-weight: 600; }
+    .method { font-size: .9rem; color: #4a463f; }
+  </style>
+</Layout>
