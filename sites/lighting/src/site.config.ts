@@ -6,4 +6,5 @@ export const site: SiteConfig = {
   tagline: "Trouvez l'éclairage qui crée la bonne ambiance",
   locale: "fr",
   accent: "#b5651d",
+  amazonTag: "atelierlampes-21",
 };

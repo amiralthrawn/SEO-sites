@@ -16,6 +16,8 @@ export interface Product {
   merchant?: string;
   /** Lien affilié ; vide tant que le programme n'est pas validé. */
   url?: string;
+  /** ASIN Amazon.fr, vérifié à la main ; le lien est construit avec le tag Amazon du site. */
+  asin?: string;
   note?: string;
 }
 

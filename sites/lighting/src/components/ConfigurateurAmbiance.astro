@@ -1,7 +1,9 @@
 ---
 // Configurateur d'ambiance lumineuse. Réutilisable : <ConfigurateurAmbiance room="chambre" />
 // pré-remplit la pièce (pour les futures pages « éclairage chambre », « éclairage salon »…).
+import { AMAZON_DISCLOSURE } from "@seo/core/site";
 import { rooms, styles, moods, type Room } from "../tools/ambiance";
+import { site } from "../site.config";
 interface Props { room?: Room }
 const { room = "salon" } = Astro.props;
 ---
@@ -31,18 +33,26 @@ const { room = "salon" } = Astro.props;
     </label>
   </form>
 
-  <div class="cfg-result" id="cfg-result" aria-live="polite"></div>
+  <div class="cfg-result" id="cfg-result" aria-live="polite" data-amazon-tag={site.amazonTag ?? ""}></div>
   <p class="cfg-note">Prix indicatifs : le prix exact et le stock s'affichent chez le marchand. Estimation simplifiée,
-  qui ne remplace pas une étude d'éclairagiste.</p>
+  qui ne remplace pas une étude d'éclairagiste. Les boutons sont des liens affiliés.
+  {site.amazonTag && AMAZON_DISCLOSURE}</p>
 </section>
 
 <script>
-  import { bestBundle, budgetBundle, euros, type Bundle } from "@seo/core/bundle";
+  import { bestBundle, budgetBundle, euros, type Bundle, type Product } from "@seo/core/bundle";
+  import { amazonUrl } from "@seo/core/site";
   import { catalogue } from "../data/catalogue";
   import { request, lumensNeeded, lumenPlan, kelvinFor, sourcesAdvice, roleLabel, rooms, styles, moods, type Answers } from "../tools/ambiance";
 
   const form = document.getElementById("cfg-form") as HTMLFormElement;
   const out = document.getElementById("cfg-result")!;
+  const amazonTag = out.dataset.amazonTag;
+  // Lien marchand : lien affilié direct, sinon Amazon si l'ASIN et le tag existent ; sinon pas de bouton.
+  const link = (p: Product) =>
+    p.url ? { href: p.url, label: "Voir le prix" }
+    : p.asin && amazonTag ? { href: amazonUrl(p.asin, amazonTag), label: "Voir sur Amazon" }
+    : null;
   const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
   // Les réponses vivent dans l'URL : un ensemble peut être partagé ou mis en favori.
@@ -65,7 +75,10 @@ const { room = "salon" } = Astro.props;
   }
 
   function list(b: Bundle, bulbs: Map<string, number>): string {
-    const items = b.picks.map((p) => `
+    const items = b.picks.map((p) => {
+      const l = link(p.product);
+      const btn = l ? `<a class="btn" href="${esc(l.href)}" rel="sponsored nofollow noopener" target="_blank">${l.label}</a><span class="aff">Lien affilié</span>` : "";
+      return `
       <li>
         <div class="pick-main">
           <span class="role">${esc(roleLabel[p.slot.role])} · ${esc(p.slot.label)}</span>
@@ -75,9 +88,10 @@ const { room = "salon" } = Astro.props;
         <div class="pick-price">
           ${p.qty > 1 ? `<span class="brand">${p.qty} × ${euros(p.product.price)}</span>` : ""}
           <b>${euros(p.subtotal)}</b>
-          ${p.product.url ? `<a class="btn" href="${esc(p.product.url)}" rel="sponsored nofollow noopener" target="_blank">Voir</a>` : ""}
+          ${btn}
         </div>
-      </li>`).join("");
+      </li>`;
+    }).join("");
     return `<ul class="picks">${items}<li class="total"><b>Total</b><b>${euros(b.total)}</b></li></ul>`;
   }
 
@@ -132,6 +146,7 @@ const { room = "salon" } = Astro.props;
   .cfg .picks li:first-child { border-top: 0; }
   .cfg .pick-main { display: flex; flex-direction: column; }
   .cfg .pick-price { display: flex; flex-direction: column; align-items: flex-end; gap: .25rem; white-space: nowrap; }
+  .cfg .aff { font-size: .75rem; color: #6b665e; }
   .cfg .bulb { font-size: .85rem; color: #4a463f; }
   .cfg .picks .total { background: #f3eee7; }
   .cfg .warn { background: #fff4e5; border-radius: 6px; padding: .5rem .75rem; }

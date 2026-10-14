@@ -1,6 +1,8 @@
 // Catalogue du configurateur d'ambiance.
 // PRIX INDICATIFS, NON VÉRIFIÉS : ordres de grandeur pour faire tourner l'outil.
 // À remplacer par le flux produits Awin (prix, stock, lien affilié) avant la mise en ligne.
+// Amazon : renseigner `asin` (vérifié sur amazon.fr) pour afficher le bouton ; sans ASIN, pas de bouton.
+// Règle Amazon : un prix affiché doit venir de leur API (mise à jour < 24 h), pas d'un relevé à la main.
 // Tags de style : japandi, scandinave, contemporain, industriel, boheme.
 // Tags d'ambiance : chaleureuse, tamisee, lumineuse, luxueuse. Autres : sans-fil.
 import type { Product } from "@seo/core/bundle";
