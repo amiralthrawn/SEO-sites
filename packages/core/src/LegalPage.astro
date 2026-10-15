@@ -4,7 +4,7 @@ import type { SiteConfig } from "./site";
 interface Props { site: SiteConfig }
 const { site } = Astro.props;
 const host = new URL(site.url).host;
-const contact = `contact@${host}`;
+const contact = site.contactEmail;
 ---
 <Layout site={site} title="Mentions légales et affiliation" description={`Éditeur, hébergeur, liens d'affiliation et données personnelles du site ${site.name}.`} path="/mentions-legales">
   <h1>Mentions légales</h1>
@@ -13,7 +13,7 @@ const contact = `contact@${host}`;
   <p>{site.name} ({host}) est un site personnel édité par un particulier, à titre non professionnel.
   Conformément à l'article 6, III, 2 de la loi n° 2004-575 du 21 juin 2004 (LCEN), l'éditeur a choisi de rester anonyme
   et a communiqué ses coordonnées à l'hébergeur.</p>
-  <p>Contact : <a href={`mailto:${contact}`}>{contact}</a></p>
+  {contact && <p>Contact : <a href={`mailto:${contact}`}>{contact}</a></p>}
 
   <h2>Hébergeur</h2>
   <p>Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis. <a href="https://www.cloudflare.com/" rel="nofollow">cloudflare.com</a></p>
@@ -31,7 +31,7 @@ const contact = `contact@${host}`;
   La mesure d'audience, si elle est active, est anonyme et sans cookie.
   Lorsque vous cliquez sur un lien d'affiliation, le site du marchand ou la plateforme d'affiliation peut déposer ses propres cookies,
   selon sa propre politique de confidentialité.</p>
-  <p>Pour toute question, écrivez à <a href={`mailto:${contact}`}>{contact}</a>.</p>
+  {contact && <p>Pour toute question, écrivez à <a href={`mailto:${contact}`}>{contact}</a>.</p>}
 
   <h2>Propriété intellectuelle</h2>
   <p>Les textes de ce site sont la propriété de l'éditeur. Les noms de produits et de marques appartiennent à leurs propriétaires respectifs.</p>

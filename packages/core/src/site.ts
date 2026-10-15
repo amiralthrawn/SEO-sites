@@ -4,6 +4,8 @@ export interface SiteConfig {
   tagline: string;
   locale: string;
   accent: string;
+  /** Adresse de contact affichée dans les mentions légales, une fois la redirection d'email créée. */
+  contactEmail?: string;
 }
 
 export function canonical(site: SiteConfig, path: string): string {
