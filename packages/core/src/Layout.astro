@@ -32,7 +32,8 @@ const fullTitle = path === "/" ? `${title}` : `${title} | ${site.name}`;
     <header><a href="/">{site.name}</a></header>
     <main><slot /></main>
     <footer>
-      <p>Certains liens sont des liens d'affiliation : si vous achetez via ces liens, nous touchons une commission, sans surcoût pour vous.</p>
+      <p>Certains liens sont des liens d'affiliation : si vous achetez via ces liens, nous touchons une commission, sans surcoût pour vous. <a href="/mentions-legales#affiliation">En savoir plus</a></p>
+      <p><a href="/mentions-legales">Mentions légales</a></p>
     </footer>
   </body>
 </html>

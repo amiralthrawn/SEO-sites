@@ -1,0 +1,38 @@
+---
+import Layout from "./Layout.astro";
+import type { SiteConfig } from "./site";
+interface Props { site: SiteConfig }
+const { site } = Astro.props;
+const host = new URL(site.url).host;
+const contact = site.contactEmail;
+---
+<Layout site={site} title="Mentions légales et affiliation" description={`Éditeur, hébergeur, liens d'affiliation et données personnelles du site ${site.name}.`} path="/mentions-legales">
+  <h1>Mentions légales</h1>
+
+  <h2>Éditeur du site</h2>
+  <p>{site.name} ({host}) est un site personnel édité par un particulier, à titre non professionnel.
+  Conformément à l'article 6, III, 2 de la loi n° 2004-575 du 21 juin 2004 (LCEN), l'éditeur a choisi de rester anonyme
+  et a communiqué ses coordonnées à l'hébergeur.</p>
+  {contact && <p>Contact : <a href={`mailto:${contact}`}>{contact}</a></p>}
+
+  <h2>Hébergeur</h2>
+  <p>Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis. <a href="https://www.cloudflare.com/" rel="nofollow">cloudflare.com</a></p>
+
+  <h2 id="affiliation">Liens d'affiliation</h2>
+  <p>Certains liens de ce site sont des liens d'affiliation, signalés par un bouton « Voir le prix » ou une mention à côté du lien.
+  Si vous achetez un produit après avoir cliqué sur l'un d'eux, le marchand nous verse une commission. Le prix que vous payez reste le même.</p>
+  <p>Ces commissions financent le site. Elles ne décident pas de notre sélection : nous ne recevons pas de produits gratuits
+  et aucun marchand ne paie pour figurer dans nos pages. Les prix indiqués le sont à titre indicatif et peuvent changer ;
+  seul le prix affiché par le marchand fait foi.</p>
+  <p>Nous travaillons notamment avec la plateforme d'affiliation Awin.</p>
+
+  <h2>Données personnelles et cookies</h2>
+  <p>Ce site ne dépose pas de cookie publicitaire et ne vous demande aucune donnée personnelle.
+  La mesure d'audience, si elle est active, est anonyme et sans cookie.
+  Lorsque vous cliquez sur un lien d'affiliation, le site du marchand ou la plateforme d'affiliation peut déposer ses propres cookies,
+  selon sa propre politique de confidentialité.</p>
+  {contact && <p>Pour toute question, écrivez à <a href={`mailto:${contact}`}>{contact}</a>.</p>}
+
+  <h2>Propriété intellectuelle</h2>
+  <p>Les textes de ce site sont la propriété de l'éditeur. Les noms de produits et de marques appartiennent à leurs propriétaires respectifs.</p>
+</Layout>

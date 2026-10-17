@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./site": "./src/site.ts",
-    "./Layout.astro": "./src/Layout.astro"
+    "./Layout.astro": "./src/Layout.astro",
+    "./LegalPage.astro": "./src/LegalPage.astro"
   }
 }
