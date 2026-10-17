@@ -6,4 +6,5 @@ export const site: SiteConfig = {
   tagline: "Une pièce plus belle et plus silencieuse",
   locale: "fr",
   accent: "#5b5f8a",
+  contactEmail: "contact@atelier-acoustique.fr",
 };
