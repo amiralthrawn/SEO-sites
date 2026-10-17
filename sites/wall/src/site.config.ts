@@ -6,4 +6,5 @@ export const site: SiteConfig = {
   tagline: "Transformez un mur sans gros travaux",
   locale: "fr",
   accent: "#4a6b5d",
+  contactEmail: "contact@atelier-du-mur.fr",
 };
