@@ -1,0 +1,138 @@
+---
+import Layout from "@seo/core/Layout.astro";
+import { canonical } from "@seo/core/site";
+import { site } from "../site.config";
+import { amazonUrl } from "../data/lampes-abordables";
+import { bankerLamps } from "../data/lampes-banquier";
+
+const path = "/lampe-de-banquier";
+const title = "Lampe de banquier : 4 modèles bien notés et guide pour bien choisir";
+const description = "Lampe de banquier, de bibliothèque ou de notaire : notre sélection de 4 modèles bien notés, l'histoire de ce luminaire et nos conseils pour choisir l'ampoule, la taille et le style.";
+const updated = "octobre 2026";
+
+const faq = [
+  {
+    q: "Quelle différence entre lampe de banquier, de bibliothèque et de notaire ?",
+    a: "Dans la plupart des boutiques, ce sont des noms différents pour le même type de lampe : un abat-jour en verre, souvent vert, posé sur un pied en métal, avec une lumière dirigée vers le bureau. Le nom change selon les habitudes, pas selon l'objet.",
+  },
+  {
+    q: "Pourquoi l'abat-jour est-il souvent vert ?",
+    a: "Le verre vert adoucit la lumière et limite l'éblouissement sur un bureau ou une table de lecture. C'est devenu la signature du style, même si on trouve aussi des versions blanches, ambrées ou de style Tiffany.",
+  },
+  {
+    q: "Quelle ampoule mettre dans une lampe de banquier ?",
+    a: "Pour travailler ou lire, une LED blanc chaud (2 700 à 3 000 K) d'environ 450 à 800 lumens suffit. Vérifiez le culot (E14 ou E27) sur la fiche : certains modèles ont une LED intégrée qu'on ne change pas.",
+  },
+  {
+    q: "Une lampe de banquier éclaire-t-elle assez pour travailler ?",
+    a: "Oui sur un plan de travail, car la lumière est dirigée vers le bas. En revanche elle éclaire peu le reste de la pièce : prévoyez une autre source si le bureau est dans un salon.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: canonical(site, "/") },
+      { "@type": "ListItem", position: 2, name: "Lampe de banquier", item: canonical(site, path) },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Sélection de lampes de banquier",
+    itemListElement: bankerLamps.map((l, i) => ({ "@type": "ListItem", position: i + 1, name: l.name })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<Layout site={site} title={title} description={description} path={path} schema={schema}>
+  <nav class="crumbs"><a href="/">Accueil</a> › Lampe de banquier</nav>
+  <h1>Lampe de banquier : 4 modèles bien notés et comment bien choisir</h1>
+  <p class="meta">Mis à jour en {updated}</p>
+
+  <p class="lead">
+    Un abat-jour en verre, un pied en métal, une lumière douce qui tombe sur le bureau : la lampe de banquier, aussi appelée lampe de
+    bibliothèque ou lampe de notaire, est un classique qui donne tout de suite un air d'appartement ancien à une pièce.
+    Voici une sélection de modèles bien notés, et ce qu'il faut regarder avant d'acheter.
+  </p>
+
+  <aside class="tldr">
+    <strong>En bref</strong>
+    <ul>
+      <li>Les quatre modèles ci-dessous sont notés 4/5 ou plus sur Amazon.</li>
+      <li>Ampoule : LED blanc chaud, 450 à 800 lumens pour travailler.</li>
+      <li>Le verre vert est le style classique ; le Tiffany est plus décoratif.</li>
+      <li>La lumière est dirigée vers le bas : parfaite sur un bureau, peu utile pour éclairer une pièce.</li>
+    </ul>
+  </aside>
+
+  <section aria-labelledby="selection-title">
+    <h2 id="selection-title">Notre sélection</h2>
+    <p>Nous n'affichons pas les prix, qui changent souvent : vérifiez-les sur la fiche, ainsi que les avis récents.
+    Les notes sont celles relevées sur Amazon en {updated}.</p>
+    <div class="cards">
+      {bankerLamps.map((p) => (
+        <article class="card" id={p.id}>
+          <h3>{p.name}</h3>
+          <p class="sub">{p.type} · Note Amazon : {p.rating}</p>
+          <p>{p.pitch}</p>
+          <a class="btn" href={amazonUrl(p.asin)} rel="sponsored nofollow noopener" target="_blank">Voir sur Amazon</a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="history-title">
+    <h2 id="history-title">D'où vient la lampe de banquier ?</h2>
+    <p>Ce luminaire est né aux États-Unis au début du XXe siècle, pour les banques, les bureaux et les bibliothèques, où l'on lisait et
+    écrivait longtemps sous une lumière douce. L'abat-jour en verre dirige la lumière vers la table et évite l'éblouissement.
+    Il est resté dans les décors de bureaux de notaires et de bibliothèques, d'où ses différents noms en France.</p>
+  </section>
+
+  <section aria-labelledby="choose-title">
+    <h2 id="choose-title">Comment choisir sa lampe de banquier</h2>
+    <ul>
+      <li><b>L'usage :</b> pour travailler, privilégiez un modèle orientable ou à intensité réglable ; pour la déco, le style compte davantage.</li>
+      <li><b>L'abat-jour :</b> vert classique pour le look de bibliothèque, Tiffany pour une touche plus colorée.</li>
+      <li><b>La taille :</b> comptez environ 35 à 45 cm de haut pour un bureau ; vérifiez la largeur de l'abat-jour selon la place sur votre plan de travail.</li>
+      <li><b>Le pied :</b> le laiton ou le bronze vieilli s'accordent bien avec le bois foncé et les murs profonds (bordeaux, vert sapin).</li>
+      <li><b>L'ampoule :</b> une LED blanc chaud, avec un culot standard (E14 ou E27) si vous voulez pouvoir la changer.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions fréquentes</h2>
+    {faq.map((f) => (
+      <details><summary>{f.q}</summary><p>{f.a}</p></details>
+    ))}
+  </section>
+
+  <section class="method">
+    <h2>Comment nous choisissons</h2>
+    <p>Nous retenons des modèles notés au moins 4/5 sur Amazon et nous ne reprenons que les caractéristiques annoncées sur la fiche.
+    Nous ne recevons pas de produits gratuits. Certains liens sont affiliés : cela ne change ni le prix ni notre sélection.</p>
+  </section>
+
+  <p><a href="/lampe-champignon">Voir aussi : notre guide de la lampe champignon</a></p>
+
+  <style>
+    .crumbs, .meta { font-size: .85rem; color: #6b665e; }
+    .lead { font-size: 1.1rem; }
+    .tldr { background: #fff; border-left: 4px solid var(--accent); padding: .75rem 1rem; margin: 1.5rem 0; }
+    .tldr ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+    .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card { background: #fff; border: 1px solid #e4ded5; border-radius: 10px; padding: 1rem; }
+    .card h3 { margin: .5rem 0 0; }
+    .sub { margin: 0; font-size: .85rem; color: #6b665e; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; padding: .5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
+    details { background: #fff; border: 1px solid #e4ded5; border-radius: 8px; padding: .5rem .8rem; margin: .5rem 0; }
+    summary { cursor: pointer; font-weight: 600; }
+    .method { font-size: .9rem; color: #4a463f; }
+  </style>
+</Layout>
