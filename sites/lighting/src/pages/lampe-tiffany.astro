@@ -1,0 +1,130 @@
+---
+import Layout from "@seo/core/Layout.astro";
+import { canonical } from "@seo/core/site";
+import { site } from "../site.config";
+import { amazonUrl } from "../data/lampes-abordables";
+import { tiffanyLamps } from "../data/lampes-tiffany";
+
+const path = "/lampe-tiffany";
+const title = "Lampe Tiffany : 4 modèles en vitrail bien notés et guide pour bien choisir";
+const description = "Lampe Tiffany en vitrail ou en verre : notre sélection de 4 modèles bien notés, l'origine du style, et nos conseils pour choisir la taille, l'ampoule et la pièce.";
+const updated = "octobre 2026";
+
+const faq = [
+  {
+    q: "Qu'est-ce qu'une lampe Tiffany ?",
+    a: "C'est une lampe dont l'abat-jour est fait de petits morceaux de verre coloré assemblés, comme un vitrail. Le style vient de l'artiste américain Louis Comfort Tiffany, actif à la fin du XIXe et au début du XXe siècle.",
+  },
+  {
+    q: "Une lampe Tiffany à petit prix, est-ce une vraie Tiffany ?",
+    a: "Non : les lampes vendues à quelques dizaines d'euros sont des lampes « de style Tiffany », fabriquées industriellement. Ce sont de très bonnes pièces de déco, mais ce n'est pas la même chose qu'une pièce d'atelier ou d'époque.",
+  },
+  {
+    q: "Quelle ampoule mettre dans une lampe Tiffany ?",
+    a: "Une LED blanc chaud (2 700 K) de faible puissance suffit : le verre coloré filtre déjà la lumière, et une ampoule trop forte éblouit. Vérifiez le culot sur la fiche (E14 ou E27).",
+  },
+  {
+    q: "Où poser une lampe Tiffany ?",
+    a: "Sur une commode, un buffet, un chevet ou un bureau. Elle éclaire peu : voyez-la comme une lampe d'ambiance et gardez une autre source de lumière pour lire ou travailler.",
+  },
+];
+
+const schema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: canonical(site, "/") },
+      { "@type": "ListItem", position: 2, name: "Lampe Tiffany", item: canonical(site, path) },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Sélection de lampes Tiffany",
+    itemListElement: tiffanyLamps.map((l, i) => ({ "@type": "ListItem", position: i + 1, name: l.name })),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  },
+];
+---
+<Layout site={site} title={title} description={description} path={path} schema={schema}>
+  <nav class="crumbs"><a href="/">Accueil</a> › Lampe Tiffany</nav>
+  <h1>Lampe Tiffany : 4 modèles bien notés et comment bien choisir</h1>
+  <p class="meta">Mis à jour en {updated}</p>
+
+  <p class="lead">
+    Un abat-jour fait de petits morceaux de verre coloré, une lumière chaude qui filtre à travers les teintes : la lampe Tiffany donne
+    tout de suite du caractère à une pièce, surtout dans un intérieur ancien. Voici quatre modèles bien notés et ce qu'il faut
+    regarder avant d'acheter.
+  </p>
+
+  <aside class="tldr">
+    <strong>En bref</strong>
+    <ul>
+      <li>Les quatre modèles ci-dessous sont notés 4,5/5 ou plus sur Amazon.</li>
+      <li>À ce prix, ce sont des lampes « de style Tiffany », pas des pièces d'atelier.</li>
+      <li>Ampoule : LED blanc chaud de faible puissance, le verre filtre déjà la lumière.</li>
+      <li>C'est une lampe d'ambiance : gardez une autre source pour lire ou travailler.</li>
+    </ul>
+  </aside>
+
+  <section aria-labelledby="selection-title">
+    <h2 id="selection-title">Notre sélection</h2>
+    <p>Nous n'affichons pas les prix, qui changent souvent : vérifiez-les sur la fiche, ainsi que les avis récents.
+    Les notes sont celles relevées sur Amazon en {updated}.</p>
+    <div class="cards">
+      {tiffanyLamps.map((p) => (
+        <article class="card" id={p.id}>
+          <h3>{p.name}</h3>
+          <p class="sub">{p.type} · Note Amazon : {p.rating}</p>
+          <p>{p.pitch}</p>
+          <a class="btn" href={amazonUrl(p.asin)} rel="sponsored nofollow noopener" target="_blank">Voir sur Amazon</a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section aria-labelledby="choose-title">
+    <h2 id="choose-title">Comment choisir sa lampe Tiffany</h2>
+    <ul>
+      <li><b>La pièce :</b> en chambre ou au salon, un modèle de table ; sur un bureau, un modèle de banquier à pied haut.</li>
+      <li><b>Les couleurs :</b> accordez les teintes de l'abat-jour à vos murs. Des tons profonds (bordeaux, vert, ambre) vont bien avec du bois foncé et des murs sombres.</li>
+      <li><b>La taille :</b> comparez le diamètre de l'abat-jour à la place disponible sur le meuble.</li>
+      <li><b>L'usage :</b> pour lire ou travailler, ajoutez une autre lampe : la lumière filtrée par le verre est douce, pas forte.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="faq-title">
+    <h2 id="faq-title">Questions fréquentes</h2>
+    {faq.map((f) => (
+      <details><summary>{f.q}</summary><p>{f.a}</p></details>
+    ))}
+  </section>
+
+  <section class="method">
+    <h2>Comment nous choisissons</h2>
+    <p>Nous retenons des modèles notés au moins 4/5 sur Amazon et nous ne reprenons que les caractéristiques annoncées sur la fiche.
+    Nous ne recevons pas de produits gratuits. Certains liens sont affiliés : cela ne change ni le prix ni notre sélection.</p>
+  </section>
+
+  <p><a href="/lampe-de-banquier">Voir aussi : la lampe de banquier</a> · <a href="/lampe-kartell">la lampe Kartell</a> · <a href="/lampe-champignon">la lampe champignon</a></p>
+
+  <style>
+    .crumbs, .meta { font-size: .85rem; color: #6b665e; }
+    .lead { font-size: 1.1rem; }
+    .tldr { background: #fff; border-left: 4px solid var(--accent); padding: .75rem 1rem; margin: 1.5rem 0; }
+    .tldr ul { margin: .5rem 0 0; padding-left: 1.2rem; }
+    .cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card { background: #fff; border: 1px solid #e4ded5; border-radius: 10px; padding: 1rem; }
+    .card h3 { margin: .5rem 0 0; }
+    .sub { margin: 0; font-size: .85rem; color: #6b665e; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; padding: .5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: 600; }
+    details { background: #fff; border: 1px solid #e4ded5; border-radius: 8px; padding: .5rem .8rem; margin: .5rem 0; }
+    summary { cursor: pointer; font-weight: 600; }
+    .method { font-size: .9rem; color: #4a463f; }
+  </style>
+</Layout>
