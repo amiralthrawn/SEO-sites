@@ -4,11 +4,19 @@ import type { Pick } from "./lampes-abordables";
 
 export const bedroomSconces: Pick[] = [
   {
+    id: "chambre-tiffany-plafonnier",
+    name: "Plafonnier / applique murale style Tiffany",
+    type: "Luminaire mixte plafond ou mur, style Tiffany vitrail",
+    rating: "4,8/5",
+    pitch: "La mieux notée de la sélection. Elle se fixe au mur comme au plafond d'après le titre, et son verre coloré style Tiffany donne une lumière chaude et décorative, idéale avec des tons bordeaux ou vert foncé.",
+    asin: "B0795W2156",
+  },
+  {
     id: "chambre-idegu-lot-de-2",
     name: "Lot de 2 appliques murales industrielles iDEGU",
     type: "Appliques réglables, style industriel, vendues par deux",
     rating: "4,6/5",
-    pitch: "La mieux notée de la sélection. Elles se vendent par deux, ce qui permet de symétriser de chaque côté du lit, et leur bras est ajustable d'après la fiche.",
+    pitch: "Très bien notées. Elles se vendent par deux, ce qui permet de symétriser de chaque côté du lit, et leur bras est ajustable d'après la fiche.",
     asin: "B09X12VGCF",
   },
   {
